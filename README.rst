@@ -14,4 +14,6 @@
 seqiolite
 ==========
 
-Docs are hosted [here](http://seqiolite.readthedocs.org/)
+Simplistic fasta/fastq file parsing
+
+Docs are hosted `here <http://seqiolite.readthedocs.org/>`_
