@@ -9,6 +9,6 @@ install:
     - pip install -r seqiolite/test/requirements.txt
     - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install unittest2; fi
 script:
-    - nosetests --with-coverage --cover-erase --cover-package=blasttax
+    - nosetests --with-coverage --cover-erase --cover-package=seqiolite
 after_success:
     - coveralls

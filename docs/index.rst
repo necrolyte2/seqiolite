@@ -6,10 +6,16 @@
 Welcome to seqiolite's documentation!
 =====================================
 
+Very simplistic fasta and fastq file reading with minimal dependencies.
+For a much more thourough sequence reading package check out 
+`Biopython's <https://pypi.python.org/pypi/biopython>`_ SeqIO module
+
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
+
+    fasta
 
 Indices and tables
 ==================
