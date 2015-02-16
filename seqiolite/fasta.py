@@ -4,19 +4,65 @@ class InvalidFastaSequence(Exception):
     '''
     pass
 
-class Fasta(object):
+class InvalidFastaFile(Exception):
+    '''
+    Raised for files that are not fasta formatted
+    '''
+    pass
+
+class FastaFile(object):
+    def __init__(self, handleish):
+        if not FastaFile.is_fasta(handleish):
+            raise InvalidFastaFile('Not a fasta formatted file')
+        if hasattr(handleish, 'tell'):
+            self.handleish = handleish
+            self.close = True
+        else:
+            self.handleish = open(handleish)
+            self.close = True
+
     @staticmethod
     def is_fasta(handleish):
         '''
         Return if file path or handle is fasta
         '''
+        if hasattr(handleish, 'tell'):
+            # Get current file posision so we can reset later
+            curpos = handleish.tell()
+            handle = handleish
+            close = False
+        else:
+            handle = open(handleish)
+            curpos = 0
+            close = True
+        try:
+            firstline = handle.readline()
+            is_fasta = firstline.lstrip()[0] == '>'
+            handle.seek(curpos)
+            return is_fasta
+        finally:
+            if close:
+                handle.close()
 
-    def parse(self, handleish):
-        '''
-        Parse a given filehandle or file path and generate FastaRecords
-        '''
+    def __iter__(self):
+        idline = None
+        seq = []
+        for line in self.handleish:
+            if line.startswith('>'):
+                if idline:
+                    # Found another idline so yield record
+                    yield FastaRecord(idline, ''.join(seq))
+                # Reset
+                seq = []
+                idline = line.strip()
+            else:
+                seq.append(line.strip())
+        yield FastaRecord(idline, ''.join(seq))
 
 class FastaRecord(object):
+    '''
+    FastaRecord contains data related to a fasta record
+    '''
     DNA = set('ATGCN-atgcn')
     RNA = set('UCAGN-ucagn')
     VALID_SEQ = DNA | RNA
@@ -38,9 +84,12 @@ class FastaRecord(object):
         '''
         s = identifier.split(None, 1)
         if len(s) == 1:
-            return (s[0], '')
+            _id = s[0][1:]
+            _desc = ''
         else:
-            return (s[0], s[1])
+            _id = s[0][1:]
+            _desc = s[1]
+        return (_id, _desc)
 
     @property
     def id(self):
