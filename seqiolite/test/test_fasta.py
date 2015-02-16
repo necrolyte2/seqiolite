@@ -6,7 +6,7 @@ except ImportError:
 try:
     import builtins
 except ImportError:
-    import __builtins__ as builtins
+    import __builtin__ as builtins
 
 import mock
 
